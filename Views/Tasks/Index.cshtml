@@ -1,0 +1,251 @@
+﻿
+@model IEnumerable<ToDoList.Models.TaskItem>
+
+@{
+    ViewData["Title"] = "My Tasks";
+}
+
+<div class="todo-page">
+
+    <div class="todo-heading">
+        <div>
+            <h1>My Tasks</h1>
+            <p>Manage your tasks and keep track of deadlines.</p>
+        </div>
+
+        <a asp-action="Create"
+           class="btn-todo btn-todo-primary">
+            <span>+</span> Add New Task
+        </a>
+    </div>
+
+    <!-- Search by Date and Time -->
+    <div class="todo-card mb-4">
+        <div class="todo-card-body">
+
+            <h4 class="mb-3">Search Tasks by Date & Time</h4>
+
+            <form asp-controller="Tasks"
+                  asp-action="Index"
+                  method="get">
+
+                <div class="row g-3 align-items-end">
+
+                    <div class="col-md-4">
+                        <label class="form-label">Day</label>
+                        <input type="date"
+                               name="searchDate"
+                               class="form-control"
+                               value="@Context.Request.Query["searchDate"]" />
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="form-label">From Time</label>
+                        <input type="time"
+                               name="startTime"
+                               class="form-control"
+                               value="@Context.Request.Query["startTime"]" />
+                    </div>
+
+                    <div class="col-md-3">
+                        <label class="form-label">To Time</label>
+                        <input type="time"
+                               name="endTime"
+                               class="form-control"
+                               value="@Context.Request.Query["endTime"]" />
+                    </div>
+
+                    <div class="col-md-2">
+                        <button type="submit"
+                                class="btn-todo btn-todo-primary w-100">
+                            Search
+                        </button>
+                    </div>
+
+                </div>
+
+                <a asp-controller="Tasks"
+                   asp-action="Index"
+                   class="btn-todo btn-todo-light mt-3">
+                    Clear Filters
+                </a>
+
+            </form>
+
+        </div>
+    </div>
+
+    <!-- Tasks Table -->
+    <div class="todo-table-wrapper">
+        <table class="todo-table">
+
+            <thead>
+                <tr>
+                    <th>Task</th>
+                    <th>Description</th>
+                    <th>Deadline</th>
+                    <th>Attachment</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    var remaining = item.Deadline.HasValue
+                        ? item.Deadline.Value - DateTime.Now
+                        : TimeSpan.MaxValue;
+
+                    var isUrgent = item.Deadline.HasValue
+                        && remaining <= TimeSpan.FromHours(24);
+
+                    <tr>
+                        <td>
+                            <span class="todo-task-title">
+                                @item.Title
+                            </span>
+                        </td>
+
+                        <td>
+                            <div class="todo-description">
+                                @item.Description
+                            </div>
+                        </td>
+
+                        <td>
+                            @if (item.Deadline.HasValue)
+                            {
+                                <div class="@(isUrgent ? "deadline-urgent" : "deadline-normal")">
+                                    @item.Deadline.Value.ToString("dd MMM yyyy")
+                                </div>
+
+                                <div class="small">
+                                    @item.Deadline.Value.ToString("hh:mm tt")
+                                </div>
+
+                                @if (remaining < TimeSpan.Zero)
+                                {
+                                    <span class="deadline-label">
+                                        Overdue
+                                    </span>
+                                }
+                                else if (isUrgent)
+                                {
+                                    <span class="deadline-label">
+                                        Due Soon
+                                    </span>
+                                }
+                            }
+                        </td>
+
+                        <td>
+                            @if (!string.IsNullOrEmpty(item.FileName))
+                            {
+                                <div class="d-flex flex-column gap-2">
+                                    <span class="todo-file-name">
+                                        @item.FileName
+                                    </span>
+
+                                    <a asp-action="Download"
+                                       asp-route-id="@item.Id"
+                                       class="btn-todo btn-todo-light">
+                                        Download
+                                    </a>
+                                </div>
+                            }
+                            else
+                            {
+                                <span class="text-muted">No file</span>
+                            }
+                        </td>
+
+                        <td>
+                            <div class="d-flex flex-wrap gap-2">
+
+                                <a asp-action="Edit"
+                                   asp-route-id="@item.Id"
+                                   class="btn-todo btn-todo-edit">
+                                    Edit
+                                </a>
+
+                                <form asp-action="Delete"
+                                      asp-route-id="@item.Id"
+                                      method="post"
+                                      class="delete-form">
+
+                                    @Html.AntiForgeryToken()
+
+                                    <button type="submit"
+                                            class="btn-todo btn-todo-delete">
+                                        Delete
+                                    </button>
+
+                                </form>
+
+                            </div>
+                        </td>
+                    </tr>
+                }
+
+                @if (!Model.Any())
+                {
+                    <tr>
+                        <td colspan="5" class="todo-empty">
+
+                            <span class="todo-empty-icon">☷</span>
+
+                            <h4>No tasks found</h4>
+
+                            <p>
+                                No tasks match your selected date and time.
+                                Try changing your search filters.
+                            </p>
+
+                            <a asp-controller="Tasks"
+                               asp-action="Index"
+                               class="btn-todo btn-todo-light">
+                                Clear Filters
+                            </a>
+
+                            <a asp-action="Create"
+                               class="btn-todo btn-todo-primary">
+                                Add New Task
+                            </a>
+
+                        </td>
+                    </tr>
+                }
+
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        document.querySelectorAll(".delete-form").forEach(form => {
+            form.addEventListener("submit", function (event) {
+                event.preventDefault();
+
+                Swal.fire({
+                    title: "Delete this task?",
+                    text: "This action cannot be undone.",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#dc3545",
+                    cancelButtonColor: "#64748b",
+                    confirmButtonText: "Yes, delete it",
+                    cancelButtonText: "Cancel"
+                }).then(result => {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+                });
+            });
+        });
+    </script>
+}
+

@@ -1,0 +1,58 @@
+﻿
+@{
+    ViewData["Title"] = "Welcome";
+}
+
+<div class="welcome-page">
+    <div class="welcome-overlay">
+        <div class="welcome-content">
+
+            <div class="welcome-icon">✓</div>
+
+            <p class="welcome-subtitle">WELCOME TO</p>
+
+            <h1>TaskFlow</h1>
+
+            <h2>Organize Your Tasks, Simplify Your Life.</h2>
+
+            <p class="welcome-description">
+                Manage your tasks, set deadlines, attach files,
+                and keep everything organized in one place.
+                Start your day with a clear plan!
+            </p>
+
+            <div class="welcome-buttons">
+                <a asp-controller="Tasks"
+                   asp-action="Create"
+                   class="welcome-btn welcome-btn-primary">
+                    + Create New Task
+                </a>
+
+                <a asp-controller="Tasks"
+                   asp-action="Index"
+                   class="welcome-btn welcome-btn-secondary">
+                    View My Tasks →
+                </a>
+            </div>
+
+            <div class="welcome-features">
+                <div class="feature-item">
+                    <span>✓</span>
+                    <p>Stay Organized</p>
+                </div>
+
+                <div class="feature-item">
+                    <span>◷</span>
+                    <p>Track Deadlines</p>
+                </div>
+
+                <div class="feature-item">
+                    <span>📎</span>
+                    <p>Attach Files</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+

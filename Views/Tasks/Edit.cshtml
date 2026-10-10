@@ -1,0 +1,129 @@
+﻿@model ToDoList.Models.TaskItem
+
+@{
+    ViewData["Title"] = "Edit Task";
+}
+
+<div class="todo-page">
+
+    <div class="todo-card">
+
+        <div class="todo-card-header">
+            <h3>Edit Task</h3>
+        </div>
+
+        <div class="todo-card-body">
+
+            <form asp-action="Edit"
+                  asp-route-id="@Model.Id"
+                  method="post"
+                  enctype="multipart/form-data"
+                  class="todo-form">
+
+                <input type="hidden" asp-for="Id" />
+
+                <div asp-validation-summary="ModelOnly"
+                     class="text-danger mb-3"></div>
+
+                <!-- Title -->
+                <div class="mb-4">
+                    <label asp-for="Title" class="form-label">
+                        Title
+                    </label>
+
+                    <input asp-for="Title"
+                           class="form-control" />
+
+                    <span asp-validation-for="Title"
+                          class="text-danger"></span>
+                </div>
+
+                <!-- Description -->
+                <div class="mb-4">
+                    <label asp-for="Description" class="form-label">
+                        Description
+                    </label>
+
+                    <textarea asp-for="Description"
+                              class="form-control"
+                              rows="4"></textarea>
+
+                    <span asp-validation-for="Description"
+                          class="text-danger"></span>
+                </div>
+
+                <!-- Deadline -->
+                <div class="mb-4">
+                    <label asp-for="Deadline" class="form-label">
+                        Deadline
+                    </label>
+
+                    <input asp-for="Deadline"
+                           type="datetime-local"
+                           asp-format="{0:yyyy-MM-ddTHH:mm}"
+                           class="form-control" />
+
+                    <span asp-validation-for="Deadline"
+                          class="text-danger"></span>
+                </div>
+
+                <!-- Current File -->
+                <div class="current-file-box">
+                    <span>Current file: <strong>@Model.FileName</strong></span>
+
+                    <div class="file-actions">
+                        <a asp-controller="Tasks"
+                           asp-action="OpenFile"
+                           asp-route-id="@Model.Id"
+                           class="file-link"
+                           target="_blank">
+                            Open
+                        </a>
+
+                        <a asp-action="Download"
+                           asp-route-id="@Model.Id"
+                           class="file-link">
+                            Download
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Upload New File -->
+                <div class="mb-4">
+                    <label asp-for="UploadFile"
+                           class="form-label">
+                        Upload New File
+                    </label>
+
+                    <input asp-for="UploadFile"
+                           type="file"
+                           class="form-control" />
+
+                    <span asp-validation-for="UploadFile"
+                          class="text-danger"></span>
+                </div>
+
+                <!-- Buttons -->
+                <div class="d-flex gap-3 mt-4">
+
+                    <button type="submit"
+                            class="btn-todo btn-todo-primary">
+                        Update
+                    </button>
+
+                    <a asp-action="Index"
+                       class="btn-todo btn-todo-light">
+                        Back
+                    </a>
+
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

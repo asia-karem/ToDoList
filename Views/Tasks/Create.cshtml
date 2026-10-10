@@ -1,0 +1,107 @@
+﻿@model ToDoList.Models.TaskItem
+
+@{
+    ViewData["Title"] = "Add New Task";
+}
+
+<div class="todo-page">
+
+    <div class="todo-heading">
+        <div>
+            <h1>Create a Task</h1>
+            <p>Add your task details and set a deadline.</p>
+        </div>
+    </div>
+
+    <div class="todo-card">
+        <div class="todo-card-header">
+            <h3>Task Information</h3>
+        </div>
+
+        <div class="todo-card-body">
+            <form asp-action="Create"
+                  method="post"
+                  enctype="multipart/form-data"
+                  class="todo-form">
+
+                <div asp-validation-summary="ModelOnly"
+                     class="text-danger mb-3"></div>
+
+                <div class="mb-4">
+                    <label asp-for="Title" class="form-label">
+                        Task Title
+                    </label>
+
+                    <input asp-for="Title"
+                           class="form-control"
+                           placeholder="e.g. Complete project" />
+
+                    <span asp-validation-for="Title"
+                          class="text-danger"></span>
+                </div>
+
+                <div class="mb-4">
+                    <label asp-for="Description" class="form-label">
+                        Description
+                    </label>
+
+                    <textarea asp-for="Description"
+                              class="form-control"
+                              placeholder="Write task details..."></textarea>
+
+                    <span asp-validation-for="Description"
+                          class="text-danger"></span>
+                </div>
+
+                <div class="mb-4">
+                    <label asp-for="Deadline" class="form-label">
+                        Deadline
+                    </label>
+
+                    <input asp-for="Deadline"
+                           type="datetime-local"
+                           asp-format="{0:yyyy-MM-ddTHH:mm}"
+                           class="form-control" />
+
+                    <span asp-validation-for="Deadline"
+                          class="text-danger"></span>
+                </div>
+
+                <div class="mb-4">
+                    <label asp-for="UploadFile" class="form-label">
+                        Attachment
+                    </label>
+
+                    <input asp-for="UploadFile"
+                           type="file"
+                           class="form-control" />
+
+                    <div class="form-text">
+                        Choose a document, image, video, or another file.
+                        Maximum size: 100 MB.
+                    </div>
+
+                    <span asp-validation-for="UploadFile"
+                          class="text-danger"></span>
+                </div>
+
+                <div class="d-flex flex-wrap gap-3 mt-4">
+                    <button type="submit"
+                            class="btn-todo btn-todo-primary">
+                        Save Task
+                    </button>
+
+                    <a asp-action="Index"
+                       class="btn-todo btn-todo-light">
+                        Back to Tasks
+                    </a>
+                </div>
+
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
